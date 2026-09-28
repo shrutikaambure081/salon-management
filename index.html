@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glamglow Unisex Saloon</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOGIN / REGISTER -->
+<section id="welcomeScreen" class="screen active">
+  <i class="fl f1">✂️</i><i class="fl f2">💇‍♀️</i><i class="fl f3">💄</i><i class="fl f4">💅</i><i class="fl f5">💈</i><i class="fl f6">🪞</i><i class="fl f7">🧴</i><i class="fl f8">💇‍♂️</i>
+  <div class="auth-card welcome">
+  <div class="w-logo">💇‍♀️</div>
+  <h1><span>Welcome to Glamglow Unisex Saloon</span></h1>
+  <div class="w-icons">✂️ 💄 💅 🪞 💈</div>
+  <div id="langStep"><p class="muted">Choose your language</p><div class="lang-btns">
+    <button type="button" class="btn primary" onclick="pickLang('en')">English</button>
+    <button type="button" class="btn primary" onclick="pickLang('hi')">हिन्दी</button>
+    <button type="button" class="btn primary" onclick="pickLang('mr')">मराठी</button></div></div>
+  <div id="loginStep" style="display:none"><p class="muted">Please login or register to continue</p>
+    <button type="button" class="btn primary" onclick="goAuth('loginForm')">Login</button>
+    <button type="button" class="btn" onclick="goAuth('registerForm')">Register</button></div>
+</div></section>
+
+<section id="authScreen" class="screen"><div class="auth-card">
+  <select class="langSel" style="float:right"></select>
+  <h1>꧁✂️✨💇‍♀️💇‍♂️👑🪞💎 Glamglow Unisex Saloon 💎🪞👑💇‍♂️💇‍♀️✨✂️꧂</h1>
+  <div class="tabs">
+    <button type="button" class="tab-btn active" data-tab="loginForm">Customer Login</button>
+    <button type="button" class="tab-btn" data-tab="registerForm">Register</button>
+    <button type="button" class="tab-btn" data-tab="adminForm">Admin Login</button>
+  </div>
+  <form id="loginForm" class="tab-panel active">
+    <label>Mobile, Email or Name</label><input id="loginId" name="username" required autocomplete="username">
+    <label>Password</label><input class="pw" type="password" id="loginPass" name="password" required autocomplete="current-password">
+    <label class="chk"><input type="checkbox" id="remember" checked> Remember me on this device</label>
+    <button type="submit" class="btn primary">Login</button>
+    <p class="hint">New here? Use the Register tab.</p>
+  </form>
+  <form id="registerForm" class="tab-panel">
+    <label>Full Name</label><input id="regName" placeholder="Letters only" required>
+    <label>Mobile Number</label><input id="regMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digits" required>
+    <label>Email ID</label><input id="regEmail" type="email" placeholder="yourname@gmail.com" required>
+    <label>Password</label><input class="pw" type="password" id="regPass" placeholder="e.g. Salon@123" required autocomplete="new-password">
+    <p class="hint">At least 8 characters with letters, numbers and symbols.</p>
+    <button type="submit" class="btn primary">Register &amp; Continue</button>
+  </form>
+  <form id="adminForm" class="tab-panel">
+    <label>Username</label><input id="adminUser" required>
+    <label>Password</label><input class="pw" type="password" id="adminPass" required>
+    <button type="submit" class="btn primary">Login as Admin</button>
+    <p class="hint">Default: admin / admin123</p>
+  </form>
+  <label class="chk"><input type="checkbox" id="showPw"> Show password</label>
+  <p id="authMsg" class="msg"></p>
+  <button type="button" class="btn small" id="pubBtn" style="width:100%">📅 View live seats &amp; timings (no login needed)</button>
+</div></section>
+
+<!-- PUBLIC AVAILABILITY (visible to everyone) -->
+<div id="pubModal" class="modal"><div class="modal-box">
+  <button class="modal-x" id="pubClose" type="button">✕</button>
+  <h3>Live seats &amp; timings</h3>
+  <div class="ctl"><div><label>Date</label><input type="date" id="pubDate"></div><div><label>Service length</label><select id="pubDur"></select></div></div>
+  <div id="pubOut"></div>
+</div></div>
+
+<!-- CUSTOMER -->
+<section id="customerScreen" class="screen">
+  <header class="topbar"><h2>Welcome, <span id="custName"></span></h2>
+    <nav class="admin-nav">
+      <button class="nav-btn active" data-cview="home">🏠 Home</button>
+      <button class="nav-btn" data-cview="book">✂️ Book</button>
+      <button class="nav-btn" data-cview="seats">🪑 Seats &amp; Timings</button>
+      <button class="nav-btn" data-cview="pay">💳 Payment</button>
+      <button class="nav-btn" data-cview="hist">🧾 History</button>
+    </nav>
+    <select class="langSel"></select> <button class="btn small" id="custLogoutBtn">Logout</button></header>
+
+  <div class="cust-view active" id="cview-home">
+    <div class="card"><h3>Live Queue</h3><div id="liveQueue"></div></div>
+    <div class="card"><h3>My Bookings</h3><div id="custBookings"></div></div>
+  </div>
+
+  <div class="cust-view" id="cview-book"><div class="card">
+    <h3>Choose services</h3><div id="catTabs" class="cats"></div><div id="svcGrid" class="service-grid"></div><p id="bookSummary" class="muted"></p>
+    <h3 style="margin-top:14px">Pick date &amp; time</h3>
+    <div class="ctl"><div><label>Date</label><input type="date" id="bookDate"></div><button type="button" class="btn small" id="nextSlotBtn">⚡ Next available time</button></div>
+    <p class="legend"><i class="dot green"></i><b>Available</b><i class="dot red"></i><b>Booked</b></p><div id="slotGrid"></div>
+    <h3 style="margin-top:14px">Choose stylist</h3><div id="staffGrid" class="staff-grid"></div>
+    <h3 style="margin-top:14px">Choose seat</h3><div id="seatPick"></div>
+    <h3 style="margin-top:14px">Payment option</h3>
+    <label class="opt"><input type="radio" name="payopt" value="qr"> 📱 QR code</label>
+    <label class="opt"><input type="radio" name="payopt" value="cash"> 💵 Cash</label>
+    <div><button type="button" class="btn primary" id="confirmBtn" style="margin-top:12px">Confirm Booking</button></div>
+  </div>
+  <div class="card" id="bookResult" style="display:none"></div></div>
+
+  <div class="cust-view" id="cview-seats"><div class="card">
+    <h3>Seats right now</h3><div id="csSeats"></div>
+    <h3 style="margin-top:14px">Seats left by time</h3>
+    <div class="ctl"><div><label>Date</label><input type="date" id="csDate"></div><div><label>Service length</label><select id="csDur"></select></div></div>
+    <div id="csOut"></div></div></div>
+
+  <div class="cust-view" id="cview-pay"><div class="card"><h3>Payment</h3><div id="custPay"></div></div></div>
+
+  <div class="cust-view" id="cview-hist"><div class="card"><h3>My Visit History</h3><div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>Token</th><th>When</th><th>Services</th><th>Seat</th><th>Amount</th><th>Method</th><th>Payment</th><th>Status</th></tr></thead>
+    <tbody id="custHistoryBody"></tbody></table></div></div></div>
+</section>
+
+<!-- ADMIN -->
+<section id="adminScreen" class="screen">
+  <header class="topbar"><h2>Admin Dashboard</h2>
+    <nav class="admin-nav">
+      <button class="nav-btn active" data-view="overview">Overview</button>
+      <button class="nav-btn" data-view="bookings">Bookings &amp; Queue</button>
+      <button class="nav-btn" data-view="schedule">Schedule</button>
+      <button class="nav-btn" data-view="seats">Seats</button>
+      <button class="nav-btn" data-view="services">Services</button>
+      <button class="nav-btn" data-view="staff">Staff</button>
+      <button class="nav-btn" data-view="customers">Customers</button>
+      <button class="nav-btn" data-view="payments">Payments &amp; Reports</button>
+    </nav>
+    <button class="btn small" id="adminLogoutBtn">Logout</button></header>
+
+  <div class="admin-view active" id="view-overview">
+    <div class="stats-grid">
+      <div class="stat"><span id="stCust">0</span><label>Registered Customers</label></div>
+      <div class="stat"><span id="stWait">0</span><label>Waiting Today</label></div>
+      <div class="stat"><span id="stFree">0</span><label id="stFreeOf">Seats Free Now</label></div>
+      <div class="stat"><span id="stOcc">0</span><label>In Service</label></div>
+      <div class="stat"><span id="stRev">₹0</span><label>Today's Revenue</label></div>
+      <div class="stat"><span id="stPend">₹0</span><label>Pending Payments</label></div>
+    </div>
+    <div class="status-board">
+      <div class="status-col"><h4>⏳ Waiting</h4><div id="bdWait" class="status-list"></div></div>
+      <div class="status-col"><h4>💇 In Service (Completing)</h4><div id="bdServe" class="status-list"></div></div>
+      <div class="status-col"><h4>💰 Payment Pending</h4><div id="bdPend" class="status-list"></div></div>
+    </div>
+    <h4>Seats right now</h4><div id="ovSeats"></div>
+  </div>
+
+  <div class="admin-view" id="view-bookings">
+    <h3>Bookings &amp; Queue</h3>
+    <div class="ctl">
+      <div><label>Search</label><input id="bkSearch" placeholder="Name / mobile / token"></div>
+      <div><label>Show</label><select id="bkScope"><option value="today">Today</option><option value="all">All dates</option></select></div>
+      <div><label>Status</label><select id="bkStatus"><option value="">All</option><option>booked</option><option>serving</option><option>completed</option><option>cancelled</option></select></div>
+      <div><label>Payment</label><select id="bkPay"><option value="">All</option><option>Pending</option><option>Paid</option></select></div>
+    </div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Token</th><th>Customer</th><th>When</th><th>Services</th><th>Seat / Stylist</th><th>Status</th><th>Payment</th><th>Actions</th></tr></thead><tbody id="bkBody"></tbody></table></div>
+  </div>
+
+  <div class="admin-view" id="view-schedule">
+    <h3>Schedule by seat</h3>
+    <div class="ctl"><div><label>Date</label><input type="date" id="asDate"></div><div><label>Service length</label><select id="asDur"></select></div></div>
+    <div id="asOut"></div>
+  </div>
+
+  <div class="admin-view" id="view-seats">
+    <div class="row-between"><h3>Seat Management (click a free seat to block / unblock)</h3>
+      <div><button class="btn small primary" id="addChairBtn">+ Add Seat</button> <button class="btn small danger" id="delChairBtn">− Remove Last Seat</button></div></div>
+    <div id="adSeats"></div>
+  </div>
+
+  <div class="admin-view" id="view-services">
+    <h3>Services &amp; timings</h3>
+    <form id="svForm" class="inline-form">
+      <input id="svName" placeholder="Service name" required><input id="svPrice" type="number" min="1" placeholder="Price ₹" required>
+      <input id="svDur" type="number" min="5" step="5" placeholder="Minutes" required><input id="svIcon" placeholder="Icon" maxlength="4">
+      <button class="btn small primary" type="submit">Add Service</button></form>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Icon</th><th>Service</th><th>Price ₹</th><th>Time</th><th></th></tr></thead><tbody id="svBody"></tbody></table></div>
+  </div>
+
+  <div class="admin-view" id="view-staff">
+    <h3>Staff</h3>
+    <form id="stForm" class="inline-form"><input id="stName" placeholder="Staff name" required><select id="stGender"><option value="F">Female</option><option value="M">Male</option></select><button class="btn small primary" type="submit">Add Staff</button></form>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Availability</th><th></th></tr></thead><tbody id="stBody"></tbody></table></div>
+  </div>
+
+  <div class="admin-view" id="view-customers">
+    <div class="row-between"><h3>Customers</h3><input id="cuSearch" placeholder="Search name / mobile / email"></div>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Visits</th><th>Total Paid</th></tr></thead><tbody id="cuBody"></tbody></table></div>
+  </div>
+
+  <div class="admin-view" id="view-payments">
+    <h3>Payments &amp; Reports</h3>
+    <div class="stats-grid small">
+      <div class="stat"><span id="rpPaid">₹0</span><label>Paid Today</label></div>
+      <div class="stat"><span id="rpPend">₹0</span><label>Pending Today</label></div>
+      <div class="stat"><span id="rpAll">₹0</span><label>Total Revenue (All Time)</label></div>
+      <div class="stat"><span id="rpRef">₹0</span><label>Refunds Pending</label></div>
+    </div>
+    <h4>Service-wise revenue (today)</h4>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Service</th><th>Count</th><th>Revenue</th></tr></thead><tbody id="rpSvc"></tbody></table></div>
+    <h4>Payment history</h4>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Token</th><th>Customer</th><th>Services</th><th>Amount</th><th>Method</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody id="rpBody"></tbody></table></div>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<!-- Scripts: one file per domain, all in this same folder -->
+<script src="qr-image.js"></script>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="schedule.js"></script>
+<script src="auth.js"></script>
+<script src="payment.js"></script>
+<script src="customer.js"></script>
+<script src="admin.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
